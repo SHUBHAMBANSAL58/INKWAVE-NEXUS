@@ -1,0 +1,129 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with authentication and role metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "avatar": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["creator", "architect", "developer", "guest"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Conversational messages persisted with local cache synchronization",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["user", "model", "system"] },
+        "text": { "type": "string", "maxLength": 20000 },
+        "modelUsed": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "role", "text"]
+    },
+    "TaskShare": {
+      "title": "TaskShare",
+      "description": "Shared task invitations allowing users to invite contacts to collaborate on NEXUS tasks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "taskId": { "type": "string", "maxLength": 128 },
+        "taskTitle": { "type": "string", "maxLength": 256 },
+        "ownerId": { "type": "string", "maxLength": 128 },
+        "inviteeEmail": { "type": "string", "maxLength": 256 },
+        "inviteeName": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["collaborator", "reviewer", "observer"] },
+        "status": { "type": "string", "enum": ["invited", "accepted", "revoked"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["taskId", "ownerId", "inviteeEmail", "role"]
+    },
+    "Contact": {
+      "title": "Contact",
+      "description": "Contact book entry for team members and external collaborators",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "avatar": { "type": "string", "maxLength": 512 },
+        "organization": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["userId", "name", "email"]
+    },
+    "TaskBlueprint": {
+      "title": "TaskBlueprint",
+      "description": "Workflow templates allowing users to save and instantiate recurring sets of orchestrated tasks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 512 },
+        "category": { "type": "string", "enum": ["work", "creative", "engineering", "research", "personal"] },
+        "tasks": { "type": "array" },
+        "isCustom": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "authorName": { "type": "string", "maxLength": 128 },
+        "authorId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "name", "category", "tasks"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Orchestrated NEXUS task and recurring task instances persisted per user",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 240 },
+        "prompt": { "type": "string", "maxLength": 10000 },
+        "status": { "type": "string" },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+        "category": { "type": "string" },
+        "recurrence": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "projectFolder": { "type": "string" },
+        "tags": { "type": "array" },
+        "creatorId": { "type": "string", "maxLength": 128 },
+        "isRecurringInstance": { "type": "boolean" },
+        "persistedAt": { "type": "string" }
+      },
+      "required": ["id", "title", "prompt", "status", "priority", "creatorId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles indexed by UID"
+    },
+    "/chat_messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "Persistent chat messages cached locally with offline sync"
+    },
+    "/task_shares/{shareId}": {
+      "schema": { "$ref": "#/entities/TaskShare" },
+      "description": "Task collaboration invitations shared with contacts"
+    },
+    "/contacts/{contactId}": {
+      "schema": { "$ref": "#/entities/Contact" },
+      "description": "Address book contacts available for inviting to tasks"
+    },
+    "/task_blueprints/{blueprintId}": {
+      "schema": { "$ref": "#/entities/TaskBlueprint" },
+      "description": "Task blueprints and workflow templates"
+    },
+    "/tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/Task" },
+      "description": "User-owned NEXUS tasks and recurring task instances"
+    }
+  }
+}

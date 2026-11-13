@@ -1,0 +1,6 @@
+{
+  "name": "INKWAVE NEXUS",
+  "description": "INKWAVE NEXUS: COSMIC EDITION — An extraordinary AI-powered social publishing universe and multi-agent ecosystem. Where ideas become universes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

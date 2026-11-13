@@ -1,0 +1,1347 @@
+# INKWAVE NEXUS — THE ULTIMATE AI-POWERED SOCIAL PUBLISHING UNIVERSE
+
+## MASTER AUTONOMOUS PRODUCT ENGINEERING PROMPT
+
+### 0. THE MISSION
+
+You are not building an ordinary blogging website.
+
+You are building **INKWAVE NEXUS**, an advanced AI-powered social publishing ecosystem that combines the strongest concepts of Instagram, Medium, Reddit, Threads, Pinterest, and next-generation AI assistants.
+
+The product must deliver:
+
+- Social networking
+- Professional blogging
+- Creator communities
+- AI-powered content creation
+- Intelligent content discovery
+- Real-time communication
+- Personalized experiences
+- Autonomous AI assistance
+- Multi-agent task orchestration
+- Advanced analytics
+- Professional creator tools
+
+The product should feel like a sophisticated technology platform rather than a typical college project.
+
+**Core identity:**
+
+Product name: INKWAVE NEXUS
+
+Tagline: Create. Connect. Think. Innovate.
+
+AI assistant: NOVA
+
+Agent command centre: NEXUS CORE
+
+Four specialized agents:
+1. PLANNER
+2. DESIGNER
+3. BUILDER
+4. TESTER
+
+Product philosophy:
+
+"An intelligent digital universe where people create, connect, collaborate, and turn ideas into impact."
+
+Build an original product. Take inspiration from the interaction quality and convenience of popular platforms, but never copy proprietary designs, branding, or code.
+
+---
+
+# PART 1 — THE FOUR-AGENT INTELLIGENCE SYSTEM
+
+## 1. NEXUS CORE: MULTI-AGENT ORCHESTRATION
+
+This is the most important differentiating feature.
+
+Create an integrated AI orchestration system called NEXUS CORE.
+
+NEXUS CORE coordinates four specialized agents that collaborate to plan, design, implement, and verify tasks.
+
+The agents must be genuine software components with distinct responsibilities, structured inputs and outputs, shared task context, execution states, and controlled handoffs.
+
+Do not create four static chatbot interfaces and call them agents.
+
+Build an actual orchestration architecture.
+
+### Agent 1: PLANNER — The Strategic Brain
+
+Identity: The project strategist.
+
+Responsibilities:
+
+- Understand user requirements.
+- Analyze project goals.
+- Break large requests into smaller tasks.
+- Research relevant project context.
+- Identify dependencies.
+- Create implementation roadmaps.
+- Prioritize tasks.
+- Estimate complexity.
+- Identify missing information.
+- Assign tasks to the correct agent.
+- Maintain project milestones.
+- Track task status.
+- Detect scope conflicts.
+- Maintain a shared project knowledge base.
+
+Planner output:
+
+- Task title
+- Problem statement
+- Objectives
+- Requirements
+- Dependencies
+- Priority
+- Acceptance criteria
+- Suggested agent
+- Execution plan
+- Completion conditions
+
+Planner must not claim research or verification that it has not performed.
+
+### Agent 2: DESIGNER — The Creative Intelligence
+
+Identity: The visual experience architect.
+
+Responsibilities:
+
+- Understand product requirements.
+- Create UI/UX concepts.
+- Define design systems.
+- Select typography.
+- Define colors and visual hierarchy.
+- Design responsive layouts.
+- Create component specifications.
+- Improve usability.
+- Identify visual inconsistencies.
+- Recommend animations and transitions.
+- Improve accessibility.
+- Maintain visual consistency across pages.
+- Review dark and light themes.
+
+Designer output:
+
+- Design brief
+- Layout specifications
+- Component structure
+- Color tokens
+- Typography system
+- Responsive behavior
+- Interaction specifications
+- Accessibility requirements
+- Design acceptance criteria
+
+Designer must not sacrifice usability for decorative effects.
+
+### Agent 3: BUILDER — The Engineering Intelligence
+
+Identity: The implementation architect.
+
+Responsibilities:
+
+- Convert approved plans into implementation tasks.
+- Develop frontend components.
+- Implement backend functionality.
+- Build REST APIs.
+- Integrate databases.
+- Implement authentication.
+- Integrate approved third-party services.
+- Connect frontend and backend.
+- Implement AI integrations.
+- Manage project architecture.
+- Maintain reusable components.
+- Document implementation decisions.
+- Fix confirmed development errors.
+
+Builder rules:
+
+- Follow the Planner's approved task specification.
+- Follow the Designer's approved interface specifications.
+- Preserve existing working functionality.
+- Do not expose secrets.
+- Do not overwrite unrelated files.
+- Use modular, maintainable code.
+- Never report unexecuted work as completed.
+- Request human approval for destructive or high-impact actions.
+
+### Agent 4: TESTER — The Quality Intelligence
+
+Identity: The quality guardian.
+
+Responsibilities:
+
+- Review implementation against requirements.
+- Run unit tests.
+- Run integration tests.
+- Run end-to-end tests.
+- Validate API behavior.
+- Check database operations.
+- Verify authentication and authorization.
+- Test responsive behavior.
+- Test dark and light modes.
+- Identify broken links.
+- Detect runtime errors.
+- Review accessibility.
+- Check performance.
+- Verify edge cases.
+- Report reproducible failures.
+- Send defects back to Builder.
+
+Tester output:
+
+- Test name
+- Test objective
+- Execution status
+- Actual result
+- Expected result
+- Reproduction steps
+- Severity
+- Evidence
+- Suggested correction
+- Retest status
+
+Never mark a test as passed without actually executing it.
+
+---
+
+## 2. AGENT COLLABORATION WORKFLOW
+
+Implement this exact lifecycle:
+
+USER REQUEST
+    |
+    v
+NEXUS CORE
+    |
+    v
+PLANNER AGENT
+    |
+    v
+DESIGNER AGENT
+    |
+    v
+BUILDER AGENT
+    |
+    v
+TESTER AGENT
+    |
+    +---- FAILED ----> BUILDER FIXES
+    |                       |
+    |                       v
+    |                   TESTER RETESTS
+    |
+    +---- PASSED ----> HUMAN APPROVAL IF REQUIRED
+                            |
+                            v
+                       TASK COMPLETED
+
+Agent communication requirements:
+
+- Use structured JSON messages.
+- Maintain shared task IDs.
+- Track dependencies.
+- Record agent decisions.
+- Track task history.
+- Preserve context between handoffs.
+- Support retries with limits.
+- Prevent infinite agent loops.
+- Detect conflicting instructions.
+- Provide execution logs.
+- Maintain a clear task state.
+
+Task states:
+
+- Pending
+- Planning
+- Designing
+- Ready for implementation
+- Building
+- Testing
+- Failed
+- Awaiting approval
+- Completed
+- Cancelled
+
+Build a visual workflow showing which agent is currently active.
+
+Users should be able to:
+- Create tasks.
+- Assign tasks.
+- View agent activity.
+- Inspect outputs.
+- Approve or reject proposed work.
+- Pause execution.
+- Resume execution.
+- Cancel tasks.
+- Review previous runs.
+
+### Important execution boundaries
+
+The four agents must have controlled permissions.
+
+- Planner can create and update plans.
+- Designer can create design specifications.
+- Builder can change approved files within its authorized workspace.
+- Tester can execute approved tests and report results.
+- No agent can silently change account permissions, expose secrets, deploy production code, delete important data, or perform other high-impact actions without required approval.
+
+If the AI provider is unavailable, the platform should still function. Display an honest service-unavailable state rather than generating fake agent responses.
+
+---
+
+# PART 2 — JARVIS-INSPIRED AI ASSISTANT
+
+## 3. NOVA — YOUR INTELLIGENT DIGITAL COMPANION
+
+Create a futuristic AI assistant inspired by the conversational convenience and command-centre experience of fictional assistants such as JARVIS.
+
+Do not copy protected characters, voices, or branding.
+
+NOVA should feel like the intelligent operating layer of INKWAVE.
+
+### NOVA capabilities
+
+Natural-language commands:
+
+- "Create a new article about artificial intelligence."
+- "Summarize my latest article."
+- "Find trending technology topics."
+- "Show my top-performing posts."
+- "Plan my next seven days of content."
+- "Find creators interested in machine learning."
+- "Help me improve my writing."
+- "Explain why this post is performing well."
+- "Show my pending notifications."
+- "Prepare a weekly creator report."
+- "Ask the Planner to create a feature roadmap."
+- "Ask the Designer to improve my dashboard."
+- "Ask the Builder to implement an approved feature."
+- "Ask the Tester to verify the latest update."
+
+NOVA must understand intent, identify relevant capabilities, and route requests to the correct agent or application service.
+
+### NOVA interface
+
+Build:
+
+- Floating AI assistant
+- Expandable command panel
+- Conversational chat interface
+- Voice input
+- Text-to-speech responses
+- Conversation history
+- Suggested commands
+- Context-aware responses
+- Streaming responses where supported
+- Agent activity indicator
+- File and image attachments where appropriate
+- Permission confirmation dialogs
+
+### Voice functionality
+
+Implement optional voice interaction using supported browser speech capabilities or a configured speech service.
+
+Features:
+
+- Voice input
+- Speech recognition
+- Spoken responses
+- Mute and unmute
+- Voice settings
+- Visual listening indicator
+- Clear listening and recording states
+
+Never record continuously without explicit consent.
+
+Never imply that the microphone is active when it is not.
+
+### NOVA memory
+
+Create a privacy-aware memory system.
+
+Possible memory types:
+
+- User preferences
+- Preferred writing style
+- Saved interests
+- Creator goals
+- User-approved project context
+- Previous assistant instructions
+
+Users must be able to inspect, edit, and delete information retained by NOVA.
+
+Do not treat private messages, unpublished drafts, or sensitive information as training data.
+
+### NOVA personality
+
+- Professional
+- Helpful
+- Context-aware
+- Concise
+- Intelligent
+- Calm
+- Friendly
+- Transparent
+
+NOVA should explain what it can and cannot do.
+
+It must never pretend that an external action was completed when it failed.
+
+---
+
+# PART 3 — CORE SOCIAL PUBLISHING PLATFORM
+
+## 4. AUTHENTICATION AND SECURITY
+
+Implement:
+
+- Registration
+- Login
+- Logout
+- Email verification
+- Password recovery
+- Password reset
+- Secure password hashing
+- Refresh-token rotation
+- Session management
+- Protected routes
+- Role-based authorization
+- Optional Google OAuth
+- Account deletion
+- Account deactivation
+- Device management
+- Security notifications
+
+Use secure cookies, appropriate CSRF protections, rate limiting, server-side validation, and secure password storage.
+
+## 5. USER PROFILES
+
+Each user receives:
+
+- Profile image
+- Cover image
+- Display name
+- Unique username
+- Bio
+- Website
+- Social links
+- Interests
+- Skills
+- Followers
+- Following
+- Published posts
+- Featured posts
+- Pinned posts
+- Creator badges
+- Activity history
+- Privacy settings
+
+Include follow, unfollow, block, mute, share profile, and report actions.
+
+## 6. SOCIAL FEED
+
+Build:
+
+- For You
+- Following
+- Latest
+- Trending
+- Recommended
+- Saved
+
+Support:
+
+- Text posts
+- Long-form articles
+- Image posts
+- Video posts
+- Image carousels
+- Hashtags
+- Topic labels
+- Author previews
+- Likes
+- Comments
+- Sharing
+- Bookmarking
+- Infinite scroll
+- Pagination
+
+Use explainable ranking factors such as relevance, recency, and user-selected interests.
+
+## 7. ADVANCED BLOG EDITOR
+
+Build a professional rich-text editor.
+
+Features:
+
+- Headings
+- Paragraphs
+- Bold and italic
+- Lists
+- Quotes
+- Code blocks
+- Syntax highlighting
+- Inline links
+- Image insertion
+- Video embedding
+- Cover images
+- Captions
+- Alt text
+- Markdown support
+- Auto-save
+- Drafts
+- Preview
+- Scheduled publishing
+- Word count
+- Reading-time estimate
+- SEO metadata
+
+Publishing visibility:
+
+- Public
+- Followers only
+- Private
+- Unlisted
+
+Sanitize rendered content and prevent stored XSS.
+
+## 8. COMMENTS AND INTERACTIONS
+
+Implement:
+
+- Likes
+- Reactions
+- Comments
+- Nested replies
+- Mentions
+- Comment likes
+- Share
+- Bookmarks
+- Bookmark collections
+- Follow relationships
+- Post reporting
+- Comment moderation
+
+Persist all interactions in the database.
+
+Prevent duplicate reactions and inconsistent engagement counts.
+
+## 9. STORIES AND SHORT-FORM MEDIA
+
+Add:
+
+- 24-hour stories
+- Image stories
+- Short video stories
+- Story reactions
+- Story views
+- Story privacy
+- Short text updates
+- Short-form media feed
+
+Implement expiry and media cleanup correctly.
+
+## 10. REAL-TIME NOTIFICATIONS
+
+Support:
+
+- Likes
+- Comments
+- Replies
+- Follows
+- Mentions
+- Shares
+- Story interactions
+- System notifications
+- Moderation notices
+
+Features:
+
+- Read/unread states
+- Notification history
+- Preferences
+- Real-time delivery
+- Unread count
+
+Use Socket.IO or an appropriate real-time architecture.
+
+## 11. DIRECT MESSAGING
+
+Build:
+
+- One-to-one messaging
+- Conversation history
+- Text messages
+- Image sharing
+- Typing indicators
+- Read receipts
+- Online status with privacy controls
+- Block and report functionality
+
+Enforce conversation authorization on every endpoint.
+
+---
+
+# PART 4 — UNIQUE AND ADVANCED FEATURES
+
+## 12. INKWAVE CREATOR DNA
+
+Build a unique creator identity and personalization engine.
+
+It can analyze user-approved public posts and creator preferences to identify:
+
+- Preferred topics
+- Writing patterns
+- Content interests
+- Frequently discussed subjects
+- Audience engagement patterns
+- Content consistency
+
+Generate a Creator DNA profile with transparent explanations.
+
+Do not make sensitive personal inferences.
+
+Allow users to edit, disable, or delete their Creator DNA.
+
+## 13. SMART CONTENT ORCHESTRATOR
+
+Allow creators to plan an entire content workflow.
+
+Example:
+
+User requests:
+"Help me create a technology content series for the next week."
+
+NOVA delegates to the Planner.
+
+Planner:
+- Creates a content calendar.
+- Breaks the idea into topics.
+- Defines publishing goals.
+
+Designer:
+- Suggests post formats.
+- Creates visual direction.
+- Recommends cover concepts.
+
+Builder:
+- Creates drafts and content templates.
+- Saves approved content to the user's workspace.
+
+Tester:
+- Checks formatting, links, spelling, and required metadata.
+
+User:
+- Reviews and approves everything before publication.
+
+Do not publish automatically unless the user explicitly schedules or authorizes it.
+
+## 14. KNOWLEDGE GRAPH
+
+Build an interconnected content discovery system.
+
+Connect:
+
+- Articles
+- Authors
+- Topics
+- Tags
+- Communities
+- Discussions
+- Related posts
+
+Example:
+
+An article about AI agents should connect to:
+- Multi-agent systems
+- Artificial intelligence
+- Automation
+- Software architecture
+- Related authors
+- Related discussions
+
+Use database relationships and recommendation logic.
+
+Do not claim to have implemented a graph database unless one is actually configured.
+
+## 15. INTERACTIVE ARTICLE EXPERIENCE
+
+Make articles more than static text.
+
+Support:
+
+- Reading progress
+- Table of contents
+- Highlighted passages
+- Reader bookmarks
+- Inline discussion
+- Related articles
+- Author notes
+- Reading lists
+- Estimated reading time
+- Optional audio narration
+- Shareable article sections
+
+Make long-form reading enjoyable.
+
+## 16. COMMUNITY WORLDS
+
+Create topic-based communities.
+
+Examples:
+
+- AI and Machine Learning
+- Full Stack Development
+- Programming
+- Engineering
+- Design
+- Entrepreneurship
+- Education
+- Technology News
+
+Community features:
+
+- Community descriptions
+- Membership
+- Discussion feeds
+- Moderators
+- Community guidelines
+- Community-specific posts
+- Pinned discussions
+- Reports
+- Community search
+
+## 17. CREATOR REPUTATION ENGINE
+
+Introduce a transparent reputation system.
+
+Possible achievements:
+
+- Consistent Creator
+- Helpful Contributor
+- Community Builder
+- Technical Writer
+- Discussion Leader
+- Verified Author, only with a genuine verification process
+
+Awards must be based on documented rules.
+
+Never sell fake verification or manufacture popularity.
+
+## 18. PERSONAL KNOWLEDGE LIBRARY
+
+Create a private knowledge workspace.
+
+Users can save:
+
+- Articles
+- Posts
+- Notes
+- Highlights
+- Topics
+- Reading lists
+- Research references
+
+Include:
+
+- Search
+- Tags
+- Collections
+- Notes
+- Related content
+- Export where supported
+
+Private library content must remain private.
+
+## 19. SMART DISCOVERY ENGINE
+
+Explore:
+
+- Trending topics
+- Recommended creators
+- Popular articles
+- Communities
+- New writers
+- Topic-based collections
+
+Search across:
+
+- Users
+- Posts
+- Articles
+- Tags
+- Communities
+
+Add search filters, sorting, suggestions, and pagination.
+
+---
+
+# PART 5 — AI CREATOR STUDIO
+
+## 20. INKWAVE AI STUDIO
+
+Create an AI-powered writing and publishing workspace.
+
+Tools:
+
+- Article outline generator
+- Title generator
+- Grammar improvement
+- Tone adjustment
+- Article summarizer
+- SEO assistant
+- Hashtag suggestions
+- Content idea generator
+- Social caption generator
+- Readability feedback
+- Article restructuring
+- Draft feedback
+- Translation assistance
+
+Use server-side LLM integrations.
+
+All generated output must be editable.
+
+Users must explicitly approve publication.
+
+Do not fabricate references or sources.
+
+## 21. AI MODERATION
+
+Introduce AI-assisted moderation for:
+
+- Spam detection
+- Repeated content
+- Suspicious activity
+- Harassment signals
+- Inappropriate content flags
+
+AI moderation should provide recommendations to human moderators.
+
+High-impact moderation decisions must follow transparent rules and human review where appropriate.
+
+---
+
+# PART 6 — ADMINISTRATION AND ANALYTICS
+
+## 22. ADMIN COMMAND CENTRE
+
+Create an administrative dashboard with:
+
+- User management
+- Post management
+- Comment moderation
+- Reports
+- Account restrictions
+- Content removal
+- Appeals
+- Audit logs
+- Category management
+- Community management
+- Platform announcements
+
+Roles:
+
+- User
+- Moderator
+- Admin
+
+Enforce all permissions on the backend.
+
+## 23. CREATOR ANALYTICS
+
+Display genuine data:
+
+- Published posts
+- Drafts
+- Likes
+- Comments
+- Followers
+- Engagement trends
+- Popular posts
+- Posting consistency
+- Topic performance
+
+Add charts and date filters.
+
+Never fabricate metrics.
+
+## 24. PLATFORM INTELLIGENCE DASHBOARD
+
+Build an optional administrative overview for:
+
+- Platform activity
+- API health
+- Background jobs
+- Agent task status
+- Failed jobs
+- Error trends
+- Service status
+- Storage usage
+
+Expose operational information only to authorized administrators.
+
+Do not reveal secrets or sensitive infrastructure information.
+
+---
+
+# PART 7 — VISUAL DESIGN
+
+## 25. NEXT-GENERATION DESIGN SYSTEM
+
+Design INKWAVE NEXUS as a premium technology product.
+
+Visual language:
+
+- Deep midnight backgrounds
+- Electric blue
+- Violet
+- Cyan
+- Carefully controlled gradients
+- Elegant typography
+- Modern glass effects
+- Subtle lighting
+- Sophisticated content layouts
+- Consistent spacing
+- Premium iconography
+- Meaningful micro-interactions
+
+Provide a polished light theme and dark theme.
+
+Every component must work in both themes.
+
+Do not sacrifice accessibility for futuristic styling.
+
+## 26. NEXUS CORE VISUAL EXPERIENCE
+
+Create a distinctive multi-agent command centre.
+
+Include:
+
+- Four agent identity panels
+- Live task board
+- Agent status indicators
+- Workflow visualization
+- Task execution timeline
+- Agent-to-agent handoff visualization
+- Approval queue
+- Execution logs
+- Shared project memory view
+- Task details panel
+- Retry and cancel controls
+
+Each agent should have a unique visual identity while remaining part of one coherent design system.
+
+## 27. NOVA ASSISTANT EXPERIENCE
+
+Design a premium assistant interface.
+
+Include:
+
+- Floating assistant launcher
+- Full-screen command mode
+- Chat history
+- Voice interaction controls
+- Agent routing display
+- Context panel
+- Suggested prompts
+- Streaming responses
+- Confirmation dialogs
+- Transparent action history
+
+NOVA should feel futuristic but remain easy to use.
+
+## 28. RESPONSIVE DESIGN
+
+Support:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+Implement responsive navigation, accessible controls, optimized media, and touch-friendly layouts.
+
+Respect reduced-motion settings.
+
+---
+
+# PART 8 — TECHNICAL ARCHITECTURE
+
+## 29. RECOMMENDED TECHNOLOGY STACK
+
+Frontend:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Motion / Framer Motion
+- GSAP when appropriate
+- Lucide React
+- TanStack Query
+- React Hook Form
+- Zod
+
+Backend:
+- Node.js
+- Express
+- TypeScript
+- REST APIs
+- Socket.IO
+- JWT/session authentication
+
+Database:
+- PostgreSQL
+- Prisma ORM
+- Redis where justified
+
+Media:
+- Cloudinary or S3-compatible storage
+
+AI:
+- LLM provider through a secure backend abstraction
+- Speech services where configured
+- Structured tool calling
+- Agent orchestration service
+
+Testing:
+- Vitest
+- React Testing Library
+- Supertest
+- Playwright
+
+Deployment:
+- Vercel or equivalent
+- Render/Railway or equivalent
+- Managed PostgreSQL
+- GitHub Actions
+- Docker
+
+Choose compatible, maintained dependencies. Do not install every library indiscriminately.
+
+## 30. DATABASE DESIGN
+
+Create appropriate models for:
+
+- User
+- Profile
+- Session
+- Post
+- PostMedia
+- Category
+- Tag
+- Comment
+- Reaction
+- Follow
+- Bookmark
+- BookmarkCollection
+- Notification
+- Story
+- StoryView
+- Community
+- CommunityMember
+- Conversation
+- Message
+- Report
+- ModerationAction
+- CreatorAnalytics
+- UserSettings
+- CreatorDNA
+- KnowledgeItem
+- Agent
+- AgentTask
+- AgentRun
+- AgentMessage
+- AgentExecutionLog
+- AgentApproval
+- ProjectMemory
+- AIUsageLog
+
+Use foreign keys, indexes, constraints, timestamps, migrations, and transactions.
+
+Avoid unnecessary duplication and protect private information.
+
+## 31. BACKEND API
+
+Organize versioned endpoints for:
+
+- Authentication
+- Users
+- Profiles
+- Posts
+- Comments
+- Reactions
+- Follows
+- Bookmarks
+- Media
+- Stories
+- Communities
+- Search
+- Notifications
+- Messaging
+- Analytics
+- AI
+- Agents
+- Tasks
+- Administration
+
+Include:
+
+- Input validation
+- Authentication
+- Authorization
+- Pagination
+- Filtering
+- Sorting
+- Centralized error handling
+- Consistent response formats
+- Rate limiting
+- API documentation
+
+Keep business logic out of route handlers.
+
+## 32. AGENT SERVICE ARCHITECTURE
+
+Separate the agents from ordinary frontend components.
+
+Recommended architecture:
+
+- Agent Orchestrator
+- Planner Service
+- Designer Service
+- Builder Service
+- Tester Service
+- LLM Provider Adapter
+- Tool Registry
+- Task Queue
+- Shared Context Store
+- Approval Service
+- Execution Logger
+
+Each agent should use structured contracts.
+
+Example agent task:
+
+{
+  "taskId": "unique-task-id",
+  "agent": "planner",
+  "objective": "Plan the new creator dashboard",
+  "context": {},
+  "requirements": [],
+  "dependencies": [],
+  "status": "pending",
+  "approvalRequired": true
+}
+
+Do not allow arbitrary LLM-generated commands to execute directly on the server.
+
+Use explicit tool permissions and isolated execution environments for approved development tasks.
+
+---
+
+# PART 9 — SECURITY, PRIVACY AND RELIABILITY
+
+## 33. SECURITY REQUIREMENTS
+
+Implement:
+
+- Secure password hashing
+- Secure token handling
+- HTTP security headers
+- CORS allowlist
+- CSRF protection where applicable
+- Input validation
+- Output sanitization
+- SQL injection prevention
+- XSS prevention
+- Rate limiting
+- Upload validation
+- Access control
+- Audit logging
+- Secret management
+- Dependency scanning
+- Session revocation
+
+Never expose API keys in frontend bundles.
+
+Never commit real credentials.
+
+Never trust frontend authorization.
+
+Never execute untrusted agent-generated code directly.
+
+## 34. PRIVACY
+
+Implement:
+
+- Account privacy
+- Post visibility controls
+- Data export where supported
+- Account deletion
+- User-controlled AI memory
+- Consent for optional AI processing
+- Private messaging access controls
+- Secure private drafts
+- Data retention policies
+
+Explain what information is processed by AI services.
+
+## 35. PERFORMANCE
+
+Implement:
+
+- Pagination
+- Lazy loading
+- Responsive image optimization
+- Code splitting
+- Database indexing
+- Efficient API calls
+- Caching where useful
+- Search debouncing
+- Skeleton states
+- Error boundaries
+- Background jobs where appropriate
+
+Optimize for real devices and real network conditions.
+
+---
+
+# PART 10 — TESTING AND DELIVERY
+
+## 36. TESTING STRATEGY
+
+Test:
+
+- Registration and login
+- Password recovery
+- Protected routes
+- Profile editing
+- Post creation
+- Post editing
+- Post deletion
+- Comments and replies
+- Likes
+- Follows
+- Bookmarks
+- Search
+- Media uploads
+- Notifications
+- Messaging
+- Agent orchestration
+- Agent permissions
+- Task handoffs
+- Agent retries
+- AI provider failure
+- Approval workflow
+- Responsive layouts
+- Dark and light themes
+
+Run unit, integration, and end-to-end tests.
+
+Verify that actual builds succeed.
+
+Never report an unexecuted test as passed.
+
+## 37. DEVELOPMENT WORKFLOW
+
+Use the following sequence for every substantial feature:
+
+1. PLANNER defines requirements and acceptance criteria.
+2. DESIGNER produces interface and interaction specifications.
+3. BUILDER implements the approved specifications.
+4. TESTER executes tests and records results.
+5. BUILDER resolves confirmed failures.
+6. TESTER retests.
+7. Human approval is requested for high-impact changes.
+8. The feature is marked complete only after verification.
+
+Do not allow agents to bypass this workflow.
+
+## 38. FINAL DELIVERABLES
+
+Provide:
+
+- Complete frontend
+- Complete backend
+- PostgreSQL schema
+- Database migrations
+- Authentication
+- REST APIs
+- Social publishing features
+- NOVA assistant
+- NEXUS CORE orchestration
+- Four specialized agents
+- Agent dashboard
+- AI creator studio
+- Admin dashboard
+- Responsive design
+- Dark and light themes
+- Tests and actual test results
+- Security documentation
+- API documentation
+- README
+- `.env.example`
+- Deployment instructions
+- Local development instructions
+
+## 39. FINAL ACCEPTANCE CRITERIA
+
+INKWAVE NEXUS must be more than a visual prototype.
+
+A user must be able to:
+
+1. Register and log in.
+2. Create a complete profile.
+3. Publish articles and supported media.
+4. Edit and delete their own content.
+5. Follow creators.
+6. Like and comment.
+7. Save articles.
+8. Discover communities.
+9. Search content.
+10. Receive notifications.
+11. Use NOVA when configured.
+12. Submit tasks to the four agents.
+13. See agent execution progress.
+14. Review agent outputs.
+15. Approve or reject proposed actions.
+16. Use the application on desktop and mobile.
+
+All implemented features must use real, appropriately secured application services and persistent data.
+
+## 40. FINAL COMMAND
+
+You are an elite engineering team building a serious, original technology product.
+
+Do not build a generic template.
+
+Do not create fake functionality.
+
+Do not skip testing.
+
+Do not hide errors.
+
+Do not pretend an AI integration works without credentials.
+
+Do not build all advanced modules at the expense of core stability.
+
+Inspect the existing repository first.
+
+Create an implementation roadmap.
+
+Build the core platform.
+
+Implement NEXUS CORE and the four specialized agents as a genuine coordinated architecture.
+
+Build NOVA as the intelligent user-facing assistant.
+
+Test, fix, verify, and document every major feature.
+
+Prioritize originality, engineering quality, usability, performance, security, and maintainability.
+
+Deliver a working product that can be demonstrated confidently to recruiters, developers, and real users.
+
+**INKWAVE NEXUS — A UNIVERSE OF IDEAS, POWERED BY INTELLIGENCE.**
+
+BEGIN.
