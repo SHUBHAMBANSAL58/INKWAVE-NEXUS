@@ -6,6 +6,8 @@ export const CACHE_KEYS = {
   STORIES: 'inkwave_nexus_stories_cache_v1',
   TASKS: 'inkwave_nexus_tasks_cache_v1',
   BLUEPRINTS: 'inkwave_nexus_blueprints_cache_v1',
+  MESSAGES: 'inkwave_nexus_messages_cache_v1',
+  CREATOR_DNA_SUMMARY: 'inkwave_nexus_creator_dna_summary_v1',
   OFFLINE_QUEUE: 'inkwave_nexus_offline_queue_v1',
 };
 

@@ -11,6 +11,8 @@ import {
   INITIAL_STORIES,
   INITIAL_KNOWLEDGE_NODES,
   INITIAL_NOVA_MEMORIES,
+  INITIAL_MESSAGES,
+  OTHER_USERS,
 } from './src/mockData';
 import { processAgentHandoff, validateTaskInput } from './src/utils/orchestrator';
 import { calculateReadingTime, extractTableOfContents } from './src/utils/readingTime';
@@ -19,7 +21,13 @@ import { regenerateRecurringTask } from './src/utils/taskRecurrence.ts';
 import { INITIAL_TASK_BLUEPRINTS, instantiateBlueprint, validateBlueprintInput } from './src/utils/taskBlueprints.ts';
 import { parseVoiceTaskMemo } from './src/utils/voiceTranscription.ts';
 import { addCollaborator, removeCollaborator, getTaskCollaborators } from './src/utils/taskCollaborators.ts';
-import { AgentTask, Post, Story, TaskBlueprint, TaskCollaborator } from './src/types';
+import {
+  sanitizeMediaUrl,
+  normalizeSentimentMood,
+  SlidingWindowRateLimiter,
+  SECURITY_RESPONSE_HEADERS,
+} from './src/utils/serverSecurity.ts';
+import { AgentTask, DirectMessage, Post, Story, TaskBlueprint, TaskCollaborator } from './src/types';
 import { db } from './src/db/index.ts';
 import { geminiChats, posts as dbPosts, readLater as dbReadLater, users as dbUsers } from './src/db/schema.ts';
 import { eq, desc } from 'drizzle-orm';
@@ -31,14 +39,41 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.disable('x-powered-by');
 const PORT = Number(process.env.PORT) || 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: '2mb' }));
+
+// Security response headers across all routes (iframe-compatible)
+app.use((_req, res, next) => {
+  for (const [header, value] of Object.entries(SECURITY_RESPONSE_HEADERS)) {
+    res.setHeader(header, value);
+  }
+  next();
+});
+
+const aiRateLimiter = new SlidingWindowRateLimiter(35, 60_000);
+
 app.use('/api', (req, res, next) => {
   if (req.path === '/health' || req.path === '/db/status') {
     return next();
   }
   return requireAuth(req, res, next);
+});
+
+app.use(['/api/ai', '/api/nova'], (req, res, next) => {
+  const clientKey = `${req.ip || 'local'}:${req.path.startsWith('/chat') || req.path.startsWith('/generate') ? 'heavy' : 'std'}`;
+  const verdict = aiRateLimiter.check(clientKey);
+  res.setHeader('X-RateLimit-Limit', String(verdict.limit));
+  res.setHeader('X-RateLimit-Remaining', String(verdict.remaining));
+  if (!verdict.allowed) {
+    res.setHeader('Retry-After', String(verdict.retryAfterSeconds));
+    return res.status(429).json({
+      error: 'AI gateway rate limit exceeded. Please pause briefly before retrying.',
+      retryAfterSeconds: verdict.retryAfterSeconds,
+    });
+  }
+  next();
 });
 
 // In-memory persistent database for the applet session
@@ -48,6 +83,7 @@ let storiesStore: Story[] = [...INITIAL_STORIES];
 let communitiesStore = [...INITIAL_COMMUNITIES];
 let memoriesStore = [...INITIAL_NOVA_MEMORIES];
 let blueprintsStore: TaskBlueprint[] = [...INITIAL_TASK_BLUEPRINTS];
+let messagesStore: DirectMessage[] = [...INITIAL_MESSAGES];
 
 // Server-side Gemini client initialization
 let aiClient: GoogleGenAI | null = null;
@@ -141,7 +177,10 @@ app.post('/api/posts', (req, res) => {
     slug,
     content,
     excerpt: content.replace(/[#*`]/g, '').slice(0, 160) + '...',
-    coverImage: coverImage || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+    coverImage: sanitizeMediaUrl(
+      coverImage,
+      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80'
+    ),
     tags: Array.isArray(tags) ? tags : ['Technology'],
     category: category || 'Engineering',
     readingTime: minutes,
@@ -159,6 +198,30 @@ app.post('/api/posts', (req, res) => {
   };
 
   postsStore.unshift(newPost);
+
+  // Best-effort PostgreSQL write-through when database is connected
+  db.select()
+    .from(dbUsers)
+    .where(eq(dbUsers.uid, CURRENT_USER.id))
+    .limit(1)
+    .then(async (foundUsers) => {
+      if (foundUsers[0]) {
+        await db.insert(dbPosts).values({
+          authorId: foundUsers[0].id,
+          title: newPost.title,
+          slug: newPost.slug,
+          content: newPost.content,
+          excerpt: newPost.excerpt,
+          coverImage: newPost.coverImage,
+          category: newPost.category,
+          readingTime: newPost.readingTime,
+          wordCount: newPost.wordCount,
+          likesCount: 0,
+        });
+      }
+    })
+    .catch(() => {});
+
   res.status(201).json({ post: newPost });
 });
 
@@ -167,7 +230,7 @@ app.post('/api/posts/:id/like', (req, res) => {
   if (!post) return res.status(404).json({ error: 'Post not found' });
 
   post.isLiked = !post.isLiked;
-  post.likesCount += post.isLiked ? 1 : -1;
+  post.likesCount = Math.max(0, post.likesCount + (post.isLiked ? 1 : -1));
   res.json({ liked: post.isLiked, likesCount: post.likesCount });
 });
 
@@ -176,7 +239,7 @@ app.post('/api/posts/:id/bookmark', (req, res) => {
   if (!post) return res.status(404).json({ error: 'Post not found' });
 
   post.isBookmarked = !post.isBookmarked;
-  post.bookmarksCount += post.isBookmarked ? 1 : -1;
+  post.bookmarksCount = Math.max(0, post.bookmarksCount + (post.isBookmarked ? 1 : -1));
   res.json({ bookmarked: post.isBookmarked, bookmarksCount: post.bookmarksCount });
 });
 
@@ -195,7 +258,10 @@ app.post('/api/stories', (req, res) => {
     id: `story-${Date.now()}`,
     authorId: CURRENT_USER.id,
     author: CURRENT_USER,
-    mediaUrl: mediaUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80',
+    mediaUrl: sanitizeMediaUrl(
+      mediaUrl,
+      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80'
+    ),
     type: type || 'image',
     caption,
     createdAt: new Date().toISOString(),
@@ -217,8 +283,36 @@ app.post('/api/communities/:id/join', (req, res) => {
   if (!comm) return res.status(404).json({ error: 'Community not found.' });
 
   comm.isJoined = !comm.isJoined;
-  comm.membersCount += comm.isJoined ? 1 : -1;
+  comm.membersCount = Math.max(0, comm.membersCount + (comm.isJoined ? 1 : -1));
   res.json({ isJoined: comm.isJoined, membersCount: comm.membersCount });
+});
+
+// 4b. Direct Messages
+app.get('/api/messages', (_req, res) => {
+  res.json({ messages: messagesStore });
+});
+
+app.post('/api/messages', (req, res) => {
+  const { senderId, recipientId, content } = req.body;
+  if (typeof recipientId !== 'string' || !recipientId.trim()) {
+    return res.status(400).json({ error: 'Valid recipientId is required.' });
+  }
+  if (typeof content !== 'string' || !content.trim() || content.length > 4000) {
+    return res.status(400).json({ error: 'Message content (1-4000 chars) is required.' });
+  }
+
+  const cleanSender = typeof senderId === 'string' && senderId.trim() ? senderId.trim() : CURRENT_USER.id;
+  const newMsg: DirectMessage = {
+    id: `msg-${Date.now()}`,
+    conversationId: `conv-${recipientId.trim()}`,
+    senderId: cleanSender,
+    recipientId: recipientId.trim(),
+    content: content.trim(),
+    createdAt: 'Just now',
+    read: true,
+  };
+  messagesStore.push(newMsg);
+  res.status(201).json({ message: newMsg });
 });
 
 // 5. Creator DNA
@@ -1375,7 +1469,47 @@ app.post('/api/ai/generate-music', async (req, res) => {
   });
 });
 
-// F. Cloud SQL Database State & Chat Sessions
+// F. AI Task Sentiment & Mood Classification (Gemini API with deterministic fallback)
+app.post('/api/ai/analyze-task-sentiment', async (req, res) => {
+  const { title, prompt = '', priority = 'medium' } = req.body || {};
+  if (typeof title !== 'string' || !title.trim()) {
+    return res.status(400).json({ error: 'Task title is required for sentiment analysis.' });
+  }
+
+  const cleanTitle = title.trim().slice(0, 240);
+  const cleanPrompt = typeof prompt === 'string' ? prompt.trim().slice(0, 4000) : '';
+  const fallbackMood = normalizeSentimentMood(undefined, cleanTitle, cleanPrompt, priority);
+
+  if (aiClient) {
+    try {
+      const response = await aiClient.models.generateContent({
+        model: 'gemini-3-flash-preview',
+        contents: `Classify the cognitive workload & urgency mood of this engineering/creative task into strictly ONE word from: calm, focused, complex, urgent.\n\nTitle: ${cleanTitle}\nPriority: ${priority}\nDescription: ${cleanPrompt || 'N/A'}\n\nRespond with JSON: {"mood": "...", "reason": "short one-sentence rationale"}`,
+        config: {
+          responseMimeType: 'application/json',
+        },
+      });
+      const rawText = response.text || '{}';
+      const parsed = JSON.parse(rawText);
+      const verifiedMood = normalizeSentimentMood(parsed.mood, cleanTitle, cleanPrompt, priority);
+      return res.json({
+        mood: verifiedMood,
+        reason: typeof parsed.reason === 'string' ? parsed.reason.slice(0, 200) : `Classified via Gemini as ${verifiedMood}`,
+        provider: 'gemini',
+      });
+    } catch (err: any) {
+      console.warn('[INKWAVE NEXUS] Task sentiment Gemini fallback notice:', err?.message || err);
+    }
+  }
+
+  return res.json({
+    mood: fallbackMood,
+    reason: `Deterministic signal analysis classified task priority/scope as ${fallbackMood}.`,
+    provider: 'local-heuristic',
+  });
+});
+
+// G. Cloud SQL Database State & Chat Sessions
 app.get('/api/db/status', async (req, res) => {
   try {
     const userCount = await db.select().from(dbUsers);
@@ -1420,6 +1554,57 @@ app.use('/api', (_req, res) => {
   res.status(404).json({ error: 'API endpoint not found' });
 });
 
+async function bootstrapPostgresSeed() {
+  try {
+    const existingUsers = await db.select().from(dbUsers).limit(1);
+    if (existingUsers.length > 0) return;
+
+    const allSeedUsers = [CURRENT_USER, ...OTHER_USERS];
+    for (const u of allSeedUsers) {
+      await db
+        .insert(dbUsers)
+        .values({
+          uid: u.id,
+          email: `${u.username}@inkwave.io`,
+          name: u.name,
+          avatar: u.avatar,
+          role: u.role,
+        })
+        .onConflictDoNothing();
+    }
+
+    const seededUsers = await db.select().from(dbUsers);
+    const primaryUser = seededUsers.find((u) => u.uid === CURRENT_USER.id) || seededUsers[0];
+    if (!primaryUser) return;
+
+    for (const post of INITIAL_POSTS.slice(0, 4)) {
+      await db.insert(dbPosts).values({
+        authorId: primaryUser.id,
+        title: post.title,
+        slug: post.slug,
+        content: post.content,
+        excerpt: post.excerpt,
+        coverImage: post.coverImage,
+        category: post.category,
+        readingTime: post.readingTime,
+        wordCount: post.wordCount,
+        likesCount: post.likesCount,
+      });
+    }
+
+    const insertedPosts = await db.select().from(dbPosts).limit(1);
+    if (insertedPosts[0]) {
+      await db.insert(dbReadLater).values({
+        userId: primaryUser.id,
+        postId: insertedPosts[0].id,
+      });
+    }
+    console.log('[INKWAVE NEXUS] PostgreSQL seed records initialized cleanly.');
+  } catch (err: any) {
+    console.warn('[INKWAVE NEXUS] Non-blocking PostgreSQL seed notice:', err?.message || err);
+  }
+}
+
 // ----------------------------------------------------------------------
 // VITE DEV SERVER / STATIC HOSTING INTEGRATION
 // ----------------------------------------------------------------------
@@ -1441,6 +1626,7 @@ async function startServer() {
 
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[INKWAVE NEXUS] Full-stack server running on port ${PORT}`);
+    void bootstrapPostgresSeed();
   });
 }
 

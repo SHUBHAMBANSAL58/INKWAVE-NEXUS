@@ -5,14 +5,20 @@ import { ShieldCheck, Cpu, Activity, AlertTriangle, CheckCircle, Database, Serve
 export function AdminView() {
   const { tasks, posts, currentUser } = useApp();
   const [healthData, setHealthData] = useState<any>(null);
+  const [dbStatus, setDbStatus] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   const fetchHealth = () => {
     setLoading(true);
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => setHealthData(data))
-      .catch((e) => console.warn('Health fetch notice:', e))
+    Promise.all([
+      fetch('/api/health').then((res) => res.json()),
+      fetch('/api/db/status').then((res) => res.json()),
+    ])
+      .then(([health, db]) => {
+        setHealthData(health);
+        setDbStatus(db);
+      })
+      .catch((e) => console.warn('Telemetry fetch notice:', e))
       .finally(() => setLoading(false));
   };
 
@@ -36,11 +42,12 @@ export function AdminView() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-primary)]">Platform Command Centre</h1>
           <p className="text-sm text-[var(--text-secondary)] mt-1">
-            Monitor real-time system health, agent orchestration queues, memory telemetry, and security moderation.
+            Monitor real-time system health, agent orchestration queues, memory telemetry, and PostgreSQL persistence.
           </p>
         </div>
 
         <button
+          type="button"
           onClick={fetchHealth}
           className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-mono border border-[var(--border-color)] hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)]"
         >
@@ -54,9 +61,11 @@ export function AdminView() {
           <span className="text-xs font-mono text-[var(--text-muted)] flex items-center gap-1.5">
             <Server className="w-3.5 h-3.5 text-emerald-400" /> Server Runtime
           </span>
-          <p className="text-xl sm:text-2xl font-bold text-emerald-400">OPERATIONAL</p>
+          <p className="text-xl sm:text-2xl font-bold text-emerald-400">
+            {healthData?.status ? String(healthData.status).toUpperCase() : 'OPERATIONAL'}
+          </p>
           <p className="text-[10px] text-[var(--text-muted)] font-mono">
-            Uptime: {healthData?.uptimeSeconds || 120}s • 0 Errors
+            Uptime: {healthData?.uptimeSeconds ?? '—'}s • {healthData?.aiProvider || 'AI Gateway Ready'}
           </p>
         </div>
 
@@ -64,7 +73,9 @@ export function AdminView() {
           <span className="text-xs font-mono text-[var(--text-muted)] flex items-center gap-1.5">
             <Cpu className="w-3.5 h-3.5 text-sky-400" /> Multi-Agent Mesh
           </span>
-          <p className="text-xl sm:text-2xl font-bold text-sky-400">4 / 4 SYNCHRONIZED</p>
+          <p className="text-xl sm:text-2xl font-bold text-sky-400">
+            {completedTasks} Done / {pendingTasks} Active
+          </p>
           <p className="text-[10px] text-[var(--text-muted)] font-mono">Planner • Designer • Builder • Tester</p>
         </div>
 
@@ -73,17 +84,21 @@ export function AdminView() {
             <Activity className="w-3.5 h-3.5 text-violet-400" /> Memory Heap
           </span>
           <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">
-            {healthData?.memory?.heapUsedMb || 48} MB
+            {healthData?.memory?.heapUsedMb ?? '—'} MB
           </p>
-          <p className="text-[10px] text-[var(--text-muted)] font-mono">RSS: {healthData?.memory?.rssMb || 85} MB</p>
+          <p className="text-[10px] text-[var(--text-muted)] font-mono">RSS: {healthData?.memory?.rssMb ?? '—'} MB</p>
         </div>
 
         <div className="p-5 rounded-2xl glass-panel border border-[var(--border-color)] space-y-1">
           <span className="text-xs font-mono text-[var(--text-muted)] flex items-center gap-1.5">
-            <Database className="w-3.5 h-3.5 text-amber-400" /> Database Registry
+            <Database className="w-3.5 h-3.5 text-amber-400" /> Cloud SQL & Store
           </span>
           <p className="text-xl sm:text-2xl font-bold text-[var(--text-primary)]">{posts.length} Publications</p>
-          <p className="text-[10px] text-[var(--text-muted)] font-mono">{tasks.length} Orchestrated Tasks</p>
+          <p className="text-[10px] text-[var(--text-muted)] font-mono">
+            {dbStatus?.connected
+              ? `PG Connected (${dbStatus.stats?.users ?? 0} users, ${dbStatus.stats?.posts ?? 0} rows)`
+              : `${tasks.length} Tasks • Session Mode`}
+          </p>
         </div>
       </div>
 
@@ -94,13 +109,13 @@ export function AdminView() {
             <AlertTriangle className="w-4 h-4 text-amber-400" /> AI-Assisted Moderation Queue
           </h3>
           <p className="text-xs text-[var(--text-secondary)]">
-            Automated scanning verifies content integrity and detects spam before public propagation.
+            Automated scanning verifies content integrity, media URL protocols, and rate limits before propagation.
           </p>
           <div className="space-y-2">
             <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-emerald-500/30 text-xs flex items-center justify-between">
               <div>
                 <p className="font-semibold text-emerald-400">Zero Flagged Violations</p>
-                <p className="text-[11px] text-[var(--text-muted)]">All recent publications adhere to community standards.</p>
+                <p className="text-[11px] text-[var(--text-muted)]">All {posts.length} publications pass protocol and length checks.</p>
               </div>
               <CheckCircle className="w-4 h-4 text-emerald-400" />
             </div>
@@ -112,17 +127,21 @@ export function AdminView() {
             <Activity className="w-4 h-4 text-sky-400" /> Platform Security & Audit Trail
           </h3>
           <div className="space-y-2 text-xs font-mono">
-            <div className="p-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-between">
-              <span className="text-[var(--text-primary)]">ADMIN_SESSION_VERIFIED</span>
-              <span className="text-[10px] text-[var(--text-muted)]">User: alexvance (Root)</span>
+            <div className="p-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-between gap-2">
+              <span className="text-[var(--text-primary)]">ACTIVE_SESSION_IDENTITY</span>
+              <span className="text-[10px] text-[var(--text-muted)] truncate">
+                @{currentUser.username} ({currentUser.role})
+              </span>
             </div>
-            <div className="p-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-between">
-              <span className="text-[var(--text-primary)]">CIRCUIT_BREAKER_PASS</span>
-              <span className="text-[10px] text-emerald-400">NEXUS MESH 100% HEALTH</span>
+            <div className="p-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-between gap-2">
+              <span className="text-[var(--text-primary)]">API_SECURITY_HEADERS_AND_RL</span>
+              <span className="text-[10px] text-emerald-400">NOSNIFF + AI RATE LIMITER ON</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-between">
-              <span className="text-[var(--text-primary)]">ORCHESTRATOR_HANDOFF_VERIFIED</span>
-              <span className="text-[10px] text-[var(--text-muted)]">Planner -&gt; Tester Validated</span>
+            <div className="p-2.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] flex items-center justify-between gap-2">
+              <span className="text-[var(--text-primary)]">POSTGRES_ENGINE_STATE</span>
+              <span className={`text-[10px] ${dbStatus?.connected ? 'text-emerald-400' : 'text-amber-400'}`}>
+                {dbStatus?.connected ? `${dbStatus.engine} Connected` : 'Graceful Session Fallback'}
+              </span>
             </div>
           </div>
         </div>

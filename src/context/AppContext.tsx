@@ -176,7 +176,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     loadFromCache<Story[]>(CACHE_KEYS.STORIES, INITIAL_STORIES)
   );
   const [notifications, setNotifications] = useState<Notification[]>(INITIAL_NOTIFICATIONS);
-  const [messages, setMessages] = useState<DirectMessage[]>(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<DirectMessage[]>(() =>
+    loadFromCache<DirectMessage[]>(CACHE_KEYS.MESSAGES, INITIAL_MESSAGES)
+  );
   const [selectedArticle, setSelectedArticle] = useState<Post | null>(null);
   const [isNovaOpen, setIsNovaOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -250,6 +252,71 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     saveToCache(CACHE_KEYS.STORIES, stories);
   }, [stories]);
+
+  useEffect(() => {
+    saveToCache(CACHE_KEYS.MESSAGES, messages);
+  }, [messages]);
+
+  // Initial backend hydration when online (merges server state cleanly with local cache)
+  useEffect(() => {
+    if (!isOnline) return;
+    let cancelled = false;
+
+    const hydrateFromServer = async () => {
+      try {
+        const [postsRes, tasksRes, commRes, msgRes] = await Promise.allSettled([
+          fetch('/api/posts').then((r) => (r.ok ? r.json() : null)),
+          fetch('/api/agents/tasks').then((r) => (r.ok ? r.json() : null)),
+          fetch('/api/communities').then((r) => (r.ok ? r.json() : null)),
+          fetch('/api/messages').then((r) => (r.ok ? r.json() : null)),
+        ]);
+
+        if (cancelled) return;
+
+        if (postsRes.status === 'fulfilled' && Array.isArray(postsRes.value?.posts)) {
+          setPosts((prev) => {
+            const byId = new Map(prev.map((p) => [p.id, p]));
+            postsRes.value.posts.forEach((p: Post) => {
+              if (!byId.has(p.id)) byId.set(p.id, p);
+            });
+            return Array.from(byId.values());
+          });
+        }
+
+        if (tasksRes.status === 'fulfilled' && Array.isArray(tasksRes.value?.tasks)) {
+          setTasks((prev) => {
+            const byId = new Map(prev.map((t) => [t.id, t]));
+            tasksRes.value.tasks.forEach((t: AgentTask) => {
+              if (!byId.has(t.id)) byId.set(t.id, t);
+            });
+            return Array.from(byId.values());
+          });
+        }
+
+        if (commRes.status === 'fulfilled' && Array.isArray(commRes.value?.communities)) {
+          setCommunities(commRes.value.communities);
+        }
+
+        if (msgRes.status === 'fulfilled' && Array.isArray(msgRes.value?.messages)) {
+          setMessages((prev) => {
+            const seen = new Set(prev.map((m) => m.id));
+            const merged = [...prev];
+            msgRes.value.messages.forEach((m: DirectMessage) => {
+              if (!seen.has(m.id)) merged.push(m);
+            });
+            return merged;
+          });
+        }
+      } catch (err) {
+        console.warn('Initial hydration notice:', err);
+      }
+    };
+
+    void hydrateFromServer();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOnline]);
 
   // Global Pomodoro Focus Timer Loop
   useEffect(() => {
@@ -392,7 +459,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return {
             ...p,
             isLiked: nextLiked,
-            likesCount: p.likesCount + (nextLiked ? 1 : -1),
+            likesCount: Math.max(0, p.likesCount + (nextLiked ? 1 : -1)),
           };
         }
         return p;
@@ -420,7 +487,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return {
             ...p,
             isBookmarked: nextBookmarked,
-            bookmarksCount: p.bookmarksCount + (nextBookmarked ? 1 : -1),
+            bookmarksCount: Math.max(0, p.bookmarksCount + (nextBookmarked ? 1 : -1)),
           };
         }
         return p;
@@ -475,6 +542,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           dueDate: dueDate || data.task.dueDate,
         };
         setTasks((prev) => [finalTask, ...prev]);
+
+        // Non-blocking Gemini sentiment mood refinement
+        fetch('/api/ai/analyze-task-sentiment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, prompt, priority: assignedPriority }),
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((aiData) => {
+            if (aiData?.mood && aiData.mood !== finalTask.sentimentMood) {
+              setTasks((prev) =>
+                prev.map((t) => (t.id === finalTask.id ? { ...t, sentimentMood: aiData.mood } : t))
+              );
+              fetch(`/api/agents/tasks/${finalTask.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sentimentMood: aiData.mood }),
+              }).catch(() => {});
+            }
+          })
+          .catch(() => {});
+
         return finalTask;
       }
     } catch (err) {
@@ -1041,7 +1130,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           return {
             ...c,
             isJoined: nextJoined,
-            membersCount: c.membersCount + (nextJoined ? 1 : -1),
+            membersCount: Math.max(0, c.membersCount + (nextJoined ? 1 : -1)),
           };
         }
         return c;
@@ -1081,29 +1170,49 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const sendMessage = (recipientId: string, content: string) => {
+    const trimmed = content.trim();
+    if (!trimmed) return;
+
     const newMsg: DirectMessage = {
       id: `msg-${Date.now()}`,
       conversationId: `conv-${recipientId}`,
       senderId: currentUser.id,
       recipientId,
-      content,
+      content: trimmed,
       createdAt: 'Just now',
       read: true,
     };
     setMessages((prev) => [...prev, newMsg]);
 
+    if (isOnline) {
+      fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senderId: currentUser.id, recipientId, content: trimmed }),
+      }).catch((err) => console.warn('Message sync notice:', err));
+    }
+
     setTimeout(() => {
+      const replyContent = `Got it! I will review the architecture notes and test suite in NEXUS CORE shortly.`;
       const replyMsg: DirectMessage = {
         id: `msg-${Date.now() + 1}`,
         conversationId: `conv-${recipientId}`,
         senderId: recipientId,
         recipientId: currentUser.id,
-        content: `Got it! I will review the architecture notes and test suite in NEXUS CORE shortly.`,
+        content: replyContent,
         createdAt: 'Just now',
         read: false,
       };
       setMessages((prev) => [...prev, replyMsg]);
-    }, 1500);
+
+      if (isOnline) {
+        fetch('/api/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ senderId: recipientId, recipientId: currentUser.id, content: replyContent }),
+        }).catch(() => {});
+      }
+    }, 1200);
   };
 
   const addBookmarkToLibrary = (post: Post, note?: string) => {

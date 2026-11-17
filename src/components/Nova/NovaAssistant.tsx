@@ -23,13 +23,13 @@ import {
 } from 'lucide-react';
 
 export function NovaAssistant() {
-  const { isNovaOpen, setIsNovaOpen, setActiveView, createTask } = useApp();
+  const { isNovaOpen, setIsNovaOpen, setActiveView, currentUser } = useApp();
 
   const [messages, setMessages] = useState<NovaMessage[]>([
     {
       id: 'nova-init',
       sender: 'nova',
-      text: 'Good day, Alex. NOVA command layer is active. All four autonomous intelligences in NEXUS CORE are calibrated and standing by. How may I assist your publishing universe today?',
+      text: `Good day, ${currentUser.name.split(' ')[0]}. NOVA command layer is active. All four autonomous intelligences in NEXUS CORE are calibrated and standing by. How may I assist your publishing universe today?`,
       timestamp: 'Now',
       suggestedFollowUps: [
         'Ask the PLANNER to map out a 7-day tech series',
@@ -202,27 +202,35 @@ export function NovaAssistant() {
 
         <div className="flex items-center gap-1.5">
           <button
+            type="button"
             onClick={() => setShowMemoryModal(true)}
             className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-sky-400 hover:bg-[var(--bg-secondary)] transition-colors"
             title="Inspect NOVA Privacy-Aware Memory"
+            aria-label="Inspect NOVA Memory"
           >
             <Brain className="w-4 h-4" />
           </button>
           <button
+            type="button"
             onClick={() => setIsSpeakingEnabled(!isSpeakingEnabled)}
             className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-sky-400 hover:bg-[var(--bg-secondary)] transition-colors"
             title={isSpeakingEnabled ? 'Mute Voice Responses' : 'Enable Voice Responses'}
+            aria-label={isSpeakingEnabled ? 'Mute Voice Responses' : 'Enable Voice Responses'}
           >
             {isSpeakingEnabled ? <Volume2 className="w-4 h-4 text-sky-400" /> : <VolumeX className="w-4 h-4" />}
           </button>
           <button
+            type="button"
             onClick={() => setIsExpanded(!isExpanded)}
+            aria-label={isExpanded ? 'Minimize NOVA assistant' : 'Maximize NOVA assistant'}
             className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)] transition-colors hidden sm:block"
           >
             {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </button>
           <button
+            type="button"
             onClick={() => setIsNovaOpen(false)}
+            aria-label="Close NOVA assistant"
             className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-rose-400 hover:bg-[var(--bg-secondary)] transition-colors"
           >
             <X className="w-4 h-4" />
@@ -355,6 +363,7 @@ export function NovaAssistant() {
           <button
             type="submit"
             disabled={!inputText.trim() || isThinking}
+            aria-label="Send command to NOVA"
             className="p-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white disabled:opacity-40 transition-all shadow-md shadow-sky-500/20"
           >
             <Send className="w-4 h-4" />
@@ -372,7 +381,9 @@ export function NovaAssistant() {
                 <h3 className="font-bold text-base text-[var(--text-primary)]">NOVA Privacy-Aware Memory</h3>
               </div>
               <button
+                type="button"
                 onClick={() => setShowMemoryModal(false)}
+                aria-label="Close memory modal"
                 className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               >
                 <X className="w-5 h-5" />
@@ -398,7 +409,9 @@ export function NovaAssistant() {
                     <span className="text-[10px] text-[var(--text-muted)] mt-1 block">Recorded: {mem.createdAt}</span>
                   </div>
                   <button
+                    type="button"
                     onClick={() => handleDeleteMemory(mem.id)}
+                    aria-label="Delete memory entry"
                     className="p-1 text-[var(--text-muted)] hover:text-rose-400 transition-colors"
                     title="Delete Memory"
                   >

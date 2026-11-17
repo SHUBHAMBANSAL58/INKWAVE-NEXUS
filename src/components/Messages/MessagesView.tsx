@@ -42,19 +42,21 @@ export function MessagesView() {
       </div>
 
       {/* Main Messaging Interface */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-[580px] rounded-3xl glass-panel border border-[var(--border-color)] overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-0 md:gap-6 md:h-[580px] rounded-3xl glass-panel border border-[var(--border-color)] overflow-hidden">
         {/* Contacts Column */}
-        <div className="md:col-span-4 border-r border-[var(--border-color)] p-4 space-y-2 overflow-y-auto">
+        <div className="md:col-span-4 border-b md:border-b-0 md:border-r border-[var(--border-color)] p-4 space-y-2 max-h-52 md:max-h-none overflow-y-auto">
           <p className="text-[10px] font-mono uppercase text-[var(--text-muted)] font-semibold px-2 mb-2">
             Active Conversations
           </p>
           {OTHER_USERS.map((contact) => {
             const isSelected = contact.id === activeContact.id;
             return (
-              <div
+              <button
+                type="button"
                 key={contact.id}
+                aria-pressed={isSelected}
                 onClick={() => setSelectedRecipientId(contact.id)}
-                className={`p-3 rounded-2xl flex items-center gap-3 cursor-pointer transition-all ${
+                className={`w-full text-left p-3 rounded-2xl flex items-center gap-3 cursor-pointer transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 ${
                   isSelected
                     ? 'bg-sky-500/15 border border-sky-500/30 shadow-sm'
                     : 'hover:bg-[var(--bg-secondary)] text-[var(--text-secondary)] border border-transparent'
@@ -71,13 +73,13 @@ export function MessagesView() {
                   </div>
                   <p className="text-[11px] text-[var(--text-muted)] truncate">@{contact.username}</p>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
 
         {/* Conversation Stream Column */}
-        <div className="md:col-span-8 flex flex-col justify-between h-full bg-[var(--bg-secondary)]/20">
+        <div className="md:col-span-8 flex flex-col justify-between min-h-[380px] md:h-full bg-[var(--bg-secondary)]/20">
           {/* Header */}
           <div className="p-4 border-b border-[var(--border-color)] flex items-center gap-3 bg-[var(--bg-secondary)]/40">
             <img src={activeContact.avatar} alt={activeContact.name} className="w-8 h-8 rounded-full object-cover" />
@@ -120,6 +122,7 @@ export function MessagesView() {
             <button
               type="submit"
               disabled={!inputText.trim()}
+              aria-label={`Send message to ${activeContact.name}`}
               className="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-xs font-semibold disabled:opacity-40"
             >
               <Send className="w-4 h-4" />

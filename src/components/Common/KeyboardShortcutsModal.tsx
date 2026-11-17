@@ -12,7 +12,15 @@ export function KeyboardShortcutsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Global Keyboard Shortcuts"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-in fade-in"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
       <div className="w-full max-w-xl rounded-3xl glass-panel p-6 shadow-2xl border border-sky-500/40 space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
@@ -21,7 +29,9 @@ export function KeyboardShortcutsModal({
             <h3 className="font-bold text-base text-[var(--text-primary)]">Global Keyboard Shortcuts</h3>
           </div>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close keyboard shortcuts modal"
             className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)]"
           >
             <X className="w-5 h-5" />
@@ -50,6 +60,7 @@ export function KeyboardShortcutsModal({
         <div className="pt-3 border-t border-[var(--border-color)] flex justify-between items-center text-xs text-[var(--text-muted)] font-mono">
           <span>Tip: Press <kbd className="px-1.5 py-0.5 rounded bg-[var(--bg-secondary)] text-sky-400">?</kbd> anytime</span>
           <button
+            type="button"
             onClick={onClose}
             className="px-4 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-semibold text-xs"
           >

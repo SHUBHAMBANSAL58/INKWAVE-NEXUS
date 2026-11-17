@@ -1,17 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { calculateCreatorDNA } from '../../utils/creatorDna';
+import { loadFromCache, saveToCache, CACHE_KEYS } from '../../utils/offlineStorage';
 import { CreatorDNA } from '../../types';
-import { Dna, ShieldCheck, Sparkles, RefreshCw, BarChart2, Edit3, Trash2, Award } from 'lucide-react';
+import { Dna, ShieldCheck, RefreshCw, Edit3 } from 'lucide-react';
 
 export function CreatorDnaView() {
   const { currentUser, posts } = useApp();
-  const [dna, setDna] = useState<CreatorDNA>(() => calculateCreatorDNA(currentUser.id, posts));
+  const [dna, setDna] = useState<CreatorDNA>(() => {
+    const calculated = calculateCreatorDNA(currentUser.id, posts);
+    const savedOverrides = loadFromCache<Record<string, string>>(CACHE_KEYS.CREATOR_DNA_SUMMARY, {});
+    return savedOverrides[currentUser.id]
+      ? { ...calculated, summary: savedOverrides[currentUser.id] }
+      : calculated;
+  });
   const [isEditing, setIsEditing] = useState(false);
   const [customSummary, setCustomSummary] = useState(dna.summary);
 
   useEffect(() => {
-    setDna(calculateCreatorDNA(currentUser.id, posts));
+    const calculated = calculateCreatorDNA(currentUser.id, posts);
+    const savedOverrides = loadFromCache<Record<string, string>>(CACHE_KEYS.CREATOR_DNA_SUMMARY, {});
+    const summary = savedOverrides[currentUser.id] || calculated.summary;
+    setDna({ ...calculated, summary });
+    setCustomSummary(summary);
   }, [currentUser.id, posts]);
 
   // Compute SVG Radar polygon points for 5 axes
@@ -36,11 +47,18 @@ export function CreatorDnaView() {
     .join(' ');
 
   const handleSaveCustomSummary = () => {
-    setDna((prev) => ({ ...prev, summary: customSummary }));
+    const trimmed = customSummary.trim();
+    if (!trimmed) return;
+    const savedOverrides = loadFromCache<Record<string, string>>(CACHE_KEYS.CREATOR_DNA_SUMMARY, {});
+    saveToCache(CACHE_KEYS.CREATOR_DNA_SUMMARY, { ...savedOverrides, [currentUser.id]: trimmed });
+    setDna((prev) => ({ ...prev, summary: trimmed }));
     setIsEditing(false);
   };
 
   const handleResetDna = () => {
+    const savedOverrides = loadFromCache<Record<string, string>>(CACHE_KEYS.CREATOR_DNA_SUMMARY, {});
+    delete savedOverrides[currentUser.id];
+    saveToCache(CACHE_KEYS.CREATOR_DNA_SUMMARY, savedOverrides);
     const fresh = calculateCreatorDNA(currentUser.id, posts);
     setDna(fresh);
     setCustomSummary(fresh.summary);

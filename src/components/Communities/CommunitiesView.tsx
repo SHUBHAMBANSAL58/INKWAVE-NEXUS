@@ -38,10 +38,12 @@ export function CommunitiesView() {
             {communities.map((comm) => {
               const isSelected = comm.id === selectedCommunityId;
               return (
-                <div
+                <button
+                  type="button"
                   key={comm.id}
+                  aria-pressed={isSelected}
                   onClick={() => setSelectedCommunityId(comm.id)}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                  className={`w-full text-left p-4 rounded-2xl border cursor-pointer transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 ${
                     isSelected
                       ? 'glass-panel border-sky-500/60 shadow-lg shadow-sky-500/10'
                       : 'bg-[var(--bg-secondary)]/50 border-[var(--border-color)] hover:border-sky-500/30'
@@ -54,7 +56,7 @@ export function CommunitiesView() {
                     </span>
                   </div>
                   <p className="text-xs text-[var(--text-secondary)] line-clamp-2">{comm.description}</p>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -129,10 +131,11 @@ export function CommunitiesView() {
                 Discussions in this World ({communityPosts.length})
               </h3>
               {communityPosts.map((post) => (
-                <div
+                <button
+                  type="button"
                   key={post.id}
                   onClick={() => setSelectedArticle(post)}
-                  className="p-4 rounded-2xl glass-panel glass-panel-hover border border-[var(--border-color)] cursor-pointer transition-all space-y-2"
+                  className="w-full text-left p-4 rounded-2xl glass-panel glass-panel-hover border border-[var(--border-color)] cursor-pointer transition-all space-y-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
                 >
                   <div className="flex items-center justify-between text-xs text-[var(--text-muted)] font-mono">
                     <span className="font-semibold text-[var(--text-primary)]">{post.author.name}</span>
@@ -142,7 +145,7 @@ export function CommunitiesView() {
                     {post.title}
                   </h4>
                   <p className="text-xs text-[var(--text-secondary)] line-clamp-2">{post.excerpt}</p>
-                </div>
+                </button>
               ))}
             </div>
           </div>

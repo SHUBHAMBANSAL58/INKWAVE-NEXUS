@@ -39,15 +39,15 @@ export function LandingView() {
           </div>
 
           {/* Main Hero Headline */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] text-white">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.08] text-[var(--text-primary)]">
             ENTER THE UNIVERSE OF <br className="hidden sm:inline" />
-            <span className="bg-gradient-to-r from-sky-400 via-indigo-300 to-cyan-300 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-sky-500 via-indigo-500 to-cyan-500 bg-clip-text text-transparent">
               IDEAS.
             </span>
           </h1>
 
           {/* Tagline & Supporting Copy */}
-          <p className="text-lg sm:text-xl font-medium text-sky-200/90 tracking-wide font-mono">
+          <p className="text-lg sm:text-xl font-medium text-sky-500 tracking-wide font-mono">
             &ldquo;Where Ideas Become Universes.&rdquo;
           </p>
 
@@ -58,6 +58,7 @@ export function LandingView() {
           {/* Primary Action Buttons */}
           <div className="pt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <button
+              type="button"
               onClick={() => setActiveView('feed')}
               className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 via-indigo-600 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-white font-bold text-sm shadow-xl shadow-sky-500/25 transition-all hover:scale-105 active:scale-95 group"
             >
@@ -67,16 +68,18 @@ export function LandingView() {
             </button>
 
             <button
+              type="button"
               onClick={() => setIsNovaOpen(true)}
-              className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[var(--bg-card)] hover:bg-[var(--bg-secondary)] border border-sky-400/40 text-sky-300 font-bold text-sm shadow-lg transition-all hover:scale-105 active:scale-95 group"
+              className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-[var(--bg-card)] hover:bg-[var(--bg-secondary)] border border-sky-400/40 text-sky-500 font-bold text-sm shadow-lg transition-all hover:scale-105 active:scale-95 group"
             >
-              <Sparkles className="w-4 h-4 text-sky-400 group-hover:rotate-12 transition-transform" />
+              <Sparkles className="w-4 h-4 text-sky-500 group-hover:rotate-12 transition-transform" />
               <span>Meet NOVA AI</span>
             </button>
 
             <button
+              type="button"
               onClick={() => setActiveView('constellation')}
-              className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[var(--bg-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-white font-semibold text-sm transition-all"
+              className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-[var(--bg-secondary)] hover:bg-[var(--bg-card)] border border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] font-semibold text-sm transition-all"
             >
               <Share2 className="w-4 h-4 text-purple-400" />
               <span>3D Constellation</span>
@@ -164,8 +167,8 @@ export function LandingView() {
                 onClick={() => setActiveFeatureTab(tab.id as any)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all ${
                   isActive
-                    ? 'bg-sky-500/15 text-sky-400 border border-sky-500/30 shadow-md shadow-sky-500/10'
-                    : 'text-[var(--text-secondary)] hover:text-white hover:bg-[var(--bg-secondary)]'
+                    ? 'bg-sky-500/15 text-sky-500 border border-sky-500/30 shadow-md shadow-sky-500/10'
+                    : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-secondary)]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -258,8 +261,9 @@ export function LandingView() {
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => setActiveView('knowledge-graph')}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:text-white border border-[var(--border-color)] font-semibold text-xs transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-[var(--border-color)] font-semibold text-xs transition-colors"
                   >
                     <span>2D Force Graph</span>
                   </button>
@@ -268,7 +272,7 @@ export function LandingView() {
 
               <div className="p-6 rounded-2xl bg-[var(--bg-secondary)] border border-[var(--border-color)] text-center space-y-3">
                 <Share2 className="w-12 h-12 text-purple-400 mx-auto animate-pulse" />
-                <h4 className="font-bold text-white">Spatial Knowledge Engine</h4>
+                <h4 className="font-bold text-[var(--text-primary)]">Spatial Knowledge Engine</h4>
                 <p className="text-xs text-[var(--text-muted)] max-w-sm mx-auto">
                   Calculates real graph distances, citation linkages, and co-authorship relationships across all platform publications.
                 </p>
@@ -375,15 +379,16 @@ export function LandingView() {
       </section>
 
       {/* Direct Call to Action Footer */}
-      <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-sky-950/60 via-indigo-950/40 to-purple-950/60 border border-sky-500/30 text-center space-y-6">
-        <h2 className="text-2xl sm:text-4xl font-extrabold text-white">
+      <section className="p-8 sm:p-12 rounded-3xl bg-gradient-to-r from-sky-500/15 via-indigo-500/10 to-purple-500/15 border border-sky-500/30 text-center space-y-6">
+        <h2 className="text-2xl sm:text-4xl font-extrabold text-[var(--text-primary)]">
           Ready to reshape how knowledge is published?
         </h2>
-        <p className="text-sm sm:text-base text-sky-200/80 max-w-xl mx-auto">
+        <p className="text-sm sm:text-base text-[var(--text-secondary)] max-w-xl mx-auto">
           Join thousands of thinkers, engineers, and creators building universes of ideas.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <button
+            type="button"
             onClick={() => setActiveView('editor')}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-sky-500/25 transition-all"
           >
@@ -391,8 +396,9 @@ export function LandingView() {
             <span>Open Creator Studio</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveView('nexus-core')}
-            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[var(--bg-card)] hover:bg-[var(--bg-secondary)] border border-[var(--border-color)] text-white font-semibold text-sm transition-all"
+            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-[var(--bg-card)] hover:bg-[var(--bg-secondary)] border border-[var(--border-color)] text-[var(--text-primary)] font-semibold text-sm transition-all"
           >
             <Cpu className="w-4 h-4 text-sky-400" />
             <span>Deploy First Agent Task</span>
