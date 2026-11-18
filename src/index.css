@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 @layer base {
-  :root {
+  :root,
+  .dark-theme,
+  body.dark-theme {
     /* Cosmic Edition Dark Mode Tokens */
     --bg-primary: #050811;
     --bg-secondary: #0a1124;
@@ -33,7 +35,8 @@
     --accent-rose: #f43f5e;
   }
 
-  .light-theme {
+  .light-theme,
+  body.light-theme {
     /* Cosmic Edition Light Mode Tokens - Premium Editorial Surfaces */
     --bg-primary: #f8fafc;
     --bg-secondary: #f1f5f9;
@@ -69,6 +72,7 @@
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -90,7 +94,7 @@
 }
 
 .glass-panel-hover {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .glass-panel-hover:hover {
   border-color: rgba(56, 189, 248, 0.35);
@@ -103,7 +107,8 @@
   border: 1px solid var(--border-color);
   backdrop-filter: blur(12px);
 }
-.light-theme .cosmic-card {
+.light-theme .cosmic-card,
+body.light-theme .cosmic-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.9) 100%);
   border: 1px solid var(--border-color);
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.06);

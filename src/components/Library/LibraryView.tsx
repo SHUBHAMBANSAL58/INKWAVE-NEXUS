@@ -150,12 +150,13 @@ export function LibraryView() {
 
                 {item.post && (
                   <div>
-                    <h3
+                    <button
+                      type="button"
                       onClick={() => setSelectedArticle(item.post!)}
-                      className="font-bold text-sm text-[var(--text-primary)] hover:text-sky-400 cursor-pointer transition-colors line-clamp-2"
+                      className="text-left font-bold text-sm text-[var(--text-primary)] hover:text-sky-400 cursor-pointer transition-colors line-clamp-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded-lg"
                     >
                       {item.post.title}
-                    </h3>
+                    </button>
                     <p className="text-[11px] text-[var(--text-muted)] mt-1">
                       Author: {item.post.author.name} • {item.post.readingTime}m read
                     </p>

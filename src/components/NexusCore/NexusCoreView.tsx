@@ -204,10 +204,19 @@ export function NexusCoreView() {
     updateTaskFocusTime,
     linkTaskDependency,
     autoClusterAllTasks,
+    focusedTaskId,
+    setFocusedTaskId,
   } = useApp();
 
   const [viewMode, setViewMode] = useState<'pipeline' | 'kanban' | 'timeline' | 'flow'>('pipeline');
-  const [selectedTaskId, setSelectedTaskId] = useState<string>(tasks[0]?.id || '');
+  const [selectedTaskId, setSelectedTaskId] = useState<string>(focusedTaskId || tasks[0]?.id || '');
+
+  React.useEffect(() => {
+    if (focusedTaskId) {
+      setSelectedTaskId(focusedTaskId);
+      setFocusedTaskId(null);
+    }
+  }, [focusedTaskId, setFocusedTaskId]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<string[]>([]);
   const [batchFolderTarget, setBatchFolderTarget] = useState<string>('Architecture & Systems Core');
   const [showCreateModal, setShowCreateModal] = useState(false);

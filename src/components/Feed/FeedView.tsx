@@ -31,6 +31,7 @@ export function FeedView() {
     addStory,
     setSelectedArticle,
     searchQuery,
+    setSearchQuery,
     currentUser,
     theme,
   } = useApp();
@@ -111,29 +112,31 @@ export function FeedView() {
 
           {/* Stories List */}
           {stories.map((story) => (
-            <div
+            <button
+              type="button"
               key={story.id}
               onClick={() => setActiveStoryView(story)}
-              className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group"
+              className="flex flex-col items-center gap-1.5 shrink-0 cursor-pointer group focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded-2xl p-0.5"
             >
               <div className="w-14 h-14 rounded-2xl p-[2px] bg-gradient-to-tr from-rose-500 via-amber-400 to-violet-500 shadow-md group-hover:scale-105 transition-transform">
                 <img
                   src={story.mediaUrl || story.author.avatar}
                   alt={story.author.name}
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover rounded-[14px]"
                 />
               </div>
               <span className="text-[11px] font-medium text-[var(--text-primary)] max-w-[64px] truncate">
                 {story.author.name.split(' ')[0]}
               </span>
-            </div>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Feed Filter Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[var(--border-color)]">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-2 border-b border-[var(--border-color)]">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none shrink-0">
           {(
             [
               { id: 'for_you', label: 'For You', icon: Sparkles },
@@ -146,6 +149,7 @@ export function FeedView() {
             const active = feedFilter === tab.id;
             return (
               <button
+                type="button"
                 key={tab.id}
                 onClick={() => setFeedFilter(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 transition-all ${
@@ -164,7 +168,7 @@ export function FeedView() {
         </div>
 
         {/* Tag Filters */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0 scrollbar-none">
           {selectedTag && (
             <button
               onClick={() => setSelectedTag(null)}
@@ -200,9 +204,11 @@ export function FeedView() {
               Try switching feeds or clearing your tag/search filters to see all dispatches.
             </p>
             <button
+              type="button"
               onClick={() => {
                 setFeedFilter('for_you');
                 setSelectedTag(null);
+                setSearchQuery('');
               }}
               className="px-4 py-2 rounded-xl bg-sky-500/20 text-sky-300 border border-sky-500/40 text-xs font-mono font-bold hover:bg-sky-500/30 transition-colors"
             >
@@ -244,39 +250,47 @@ export function FeedView() {
             </div>
 
             {/* Post Title & Excerpt */}
-            <div className="cursor-pointer" onClick={() => setSelectedArticle(post)}>
+            <button
+              type="button"
+              className="w-full text-left cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 rounded-xl"
+              onClick={() => setSelectedArticle(post)}
+            >
               <h2 className="text-lg sm:text-xl font-bold text-[var(--text-primary)] hover:text-sky-400 transition-colors">
                 {post.title}
               </h2>
               <p className="text-xs sm:text-sm text-[var(--text-secondary)] mt-1.5 line-clamp-2 leading-relaxed">
                 {post.excerpt}
               </p>
-            </div>
+            </button>
 
             {/* Optional Cover Image */}
             {post.coverImage && (
-              <div
-                className="rounded-2xl overflow-hidden cursor-pointer max-h-72 border border-[var(--border-color)]"
+              <button
+                type="button"
+                className="w-full block rounded-2xl overflow-hidden cursor-pointer max-h-72 border border-[var(--border-color)] focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
                 onClick={() => setSelectedArticle(post)}
+                aria-label={`Open article ${post.title}`}
               >
                 <img
                   src={post.coverImage}
                   alt={post.title}
+                  referrerPolicy="no-referrer"
                   className="w-full h-full object-cover hover:scale-[1.01] transition-transform duration-300"
                 />
-              </div>
+              </button>
             )}
 
             {/* Tags Bar */}
             <div className="flex flex-wrap items-center gap-1.5">
               {post.tags.map((t) => (
-                <span
+                <button
+                  type="button"
                   key={t}
                   onClick={() => setSelectedTag(t)}
                   className="px-2.5 py-0.5 rounded-lg text-[11px] font-mono bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/20 cursor-pointer transition-colors"
                 >
                   #{t}
-                </span>
+                </button>
               ))}
             </div>
 
@@ -370,7 +384,9 @@ export function FeedView() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
           <div className="relative w-full max-w-sm rounded-3xl overflow-hidden glass-panel border border-sky-500/40 shadow-2xl p-6 text-center space-y-4">
             <button
+              type="button"
               onClick={() => setActiveStoryView(null)}
+              aria-label="Close story modal"
               className="absolute top-4 right-4 text-white/70 hover:text-white"
             >
               ✕
@@ -379,6 +395,7 @@ export function FeedView() {
               <img
                 src={activeStoryView.author.avatar}
                 alt={activeStoryView.author.name}
+                referrerPolicy="no-referrer"
                 className="w-10 h-10 rounded-full object-cover ring-2 ring-sky-400"
               />
               <div>
@@ -388,7 +405,7 @@ export function FeedView() {
             </div>
 
             <div className="rounded-2xl overflow-hidden max-h-80 bg-black/40 border border-white/10">
-              <img src={activeStoryView.mediaUrl} alt="Story" className="w-full h-full object-cover" />
+              <img src={activeStoryView.mediaUrl} alt="Story" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
             </div>
 
             <p className="text-sm text-white font-medium">{activeStoryView.caption}</p>
@@ -405,7 +422,9 @@ export function FeedView() {
                 <Radio className="w-4 h-4 text-rose-400" /> Share 24-Hour Ephemeral Story
               </h3>
               <button
+                type="button"
                 onClick={() => setShowStoryModal(false)}
+                aria-label="Close create story modal"
                 className="text-[var(--text-muted)] hover:text-[var(--text-primary)]"
               >
                 ✕

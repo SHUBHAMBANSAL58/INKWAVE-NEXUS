@@ -42,6 +42,11 @@ import {
 } from '../utils/offlineStorage';
 import { resolveKeyboardShortcut } from '../utils/keyboardShortcuts';
 import { toggleReadLaterItem, isPostInReadLater } from '../utils/readLater';
+import {
+  getInitialTheme,
+  saveThemePreference,
+  applyThemeClasses,
+} from '../utils/themeManager';
 
 export type ActiveView =
   | 'landing'
@@ -133,6 +138,10 @@ interface AppContextType {
   isReadLater: (postId: string) => boolean;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  focusedTaskId: string | null;
+  setFocusedTaskId: (id: string | null) => void;
+  focusedNodeId: string | null;
+  setFocusedNodeId: (id: string | null) => void;
   isOnline: boolean;
   showShortcutsHelp: boolean;
   setShowShortcutsHelp: (show: boolean) => void;
@@ -142,8 +151,10 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User>(CURRENT_USER);
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => getInitialTheme());
   const [activeView, setActiveView] = useState<ActiveView>('feed');
+  const [focusedTaskId, setFocusedTaskId] = useState<string | null>(null);
+  const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
 
   // Online / Offline State
   const [isOnline, setIsOnline] = useState<boolean>(() =>
@@ -199,13 +210,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ])
   );
 
-  // Sync theme
+  // Sync theme classes on document.body & persist to localStorage
   useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.add('light-theme');
-    } else {
-      document.documentElement.classList.remove('light-theme');
-    }
+    applyThemeClasses(theme);
+    saveThemePreference(theme);
   }, [theme]);
 
   // Register service worker and monitor network events
@@ -1309,6 +1317,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         isReadLater,
         searchQuery,
         setSearchQuery,
+        focusedTaskId,
+        setFocusedTaskId,
+        focusedNodeId,
+        setFocusedNodeId,
         isOnline,
         showShortcutsHelp,
         setShowShortcutsHelp,

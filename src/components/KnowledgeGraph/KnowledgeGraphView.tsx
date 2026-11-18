@@ -19,9 +19,17 @@ const BASE_COORDINATES: Record<string, { x: number; y: number; color: string; st
 };
 
 export function KnowledgeGraphView() {
-  const { setSelectedArticle, posts } = useApp();
-  const [selectedNodeId, setSelectedNodeId] = useState<string>('node-post-1');
+  const { setSelectedArticle, posts, focusedNodeId, setFocusedNodeId } = useApp();
+  const [selectedNodeId, setSelectedNodeId] = useState<string>(focusedNodeId || 'node-post-1');
   const [typeFilter, setTypeFilter] = useState<'all' | 'article' | 'topic' | 'author' | 'community'>('all');
+
+  React.useEffect(() => {
+    if (focusedNodeId) {
+      setSelectedNodeId(focusedNodeId);
+      setTypeFilter('all');
+      setFocusedNodeId(null);
+    }
+  }, [focusedNodeId, setFocusedNodeId]);
 
   // Merge initial graph with any newly published articles created in this session
   const { nodes, nodeCoords } = useMemo(() => {
